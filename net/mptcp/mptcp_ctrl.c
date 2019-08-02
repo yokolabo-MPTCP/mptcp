@@ -73,6 +73,7 @@ int sysctl_mptcp_debug __read_mostly;
 EXPORT_SYMBOL(sysctl_mptcp_debug);
 int sysctl_mptcp_syn_retries __read_mostly = 3;
 int sysctl_mptcp_fixed_tsq_limit __read_mostly = 0;
+int sysctl_mptcp_pacingrate_packetsout_only __read_mostly = 0;
 
 bool mptcp_init_failed __read_mostly;
 
@@ -162,6 +163,14 @@ static struct ctl_table mptcp_table[] = {
 		.mode = 0644,
 		.proc_handler = &proc_dointvec
 	},
+    {
+		.procname = "mptcp_pacingrate_packetsout_only",
+		.data = &sysctl_mptcp_pacingrate_packetsout_only,
+		.maxlen = sizeof(int),
+		.mode = 0644,
+		.proc_handler = &proc_dointvec
+	},
+
 	{
 		.procname	= "mptcp_path_manager",
 		.mode		= 0644,
