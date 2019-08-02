@@ -72,6 +72,7 @@ int sysctl_mptcp_checksum __read_mostly = 1;
 int sysctl_mptcp_debug __read_mostly;
 EXPORT_SYMBOL(sysctl_mptcp_debug);
 int sysctl_mptcp_syn_retries __read_mostly = 3;
+int sysctl_mptcp_fixed_tsq_limit __read_mostly = 0;
 
 bool mptcp_init_failed __read_mostly;
 
@@ -150,6 +151,13 @@ static struct ctl_table mptcp_table[] = {
 	{
 		.procname = "mptcp_syn_retries",
 		.data = &sysctl_mptcp_syn_retries,
+		.maxlen = sizeof(int),
+		.mode = 0644,
+		.proc_handler = &proc_dointvec
+	},
+    {
+		.procname = "mptcp_fixed_tsq_limit",
+		.data = &sysctl_mptcp_fixed_tsq_limit,
 		.maxlen = sizeof(int),
 		.mode = 0644,
 		.proc_handler = &proc_dointvec
