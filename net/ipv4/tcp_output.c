@@ -1064,7 +1064,7 @@ int tcp_transmit_skb(struct sock *sk, struct sk_buff *skb, int clone_it,
 		return err;
     
     if(tp->mpc){
-        mptcp_debug("%s: meta= %p pi= %u cwnd= %u srtt= %u thresh= %u packetsout= %u pacingrate= %u shiftpacing= %u wmemalloc= %u limit= %u tcp_enter_cwr\n", __func__, tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) / 1000,tp->snd_ssthresh, tp->packets_out,sk->sk_pacing_rate,sk->sk_pacing_rate >> 10,atomic_read(&sk->sk_wmem_alloc),limit);
+        mptcp_debug("%s: meta= %p pi= %u cwnd= %u srtt= %u thresh= %u packetsout= %u pacingrate= %u shiftpacing= %u wmemalloc= %u tcp_enter_cwr\n", __func__, tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) / 1000,tp->snd_ssthresh, tp->packets_out,sk->sk_pacing_rate,sk->sk_pacing_rate >> 10,atomic_read(&sk->sk_wmem_alloc));
     }
 
 	tcp_enter_cwr(sk);
