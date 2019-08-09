@@ -1195,6 +1195,9 @@ static int __tcp_transmit_skb(struct sock *sk, struct sk_buff *skb,
 	err = icsk->icsk_af_ops->queue_xmit(sk, skb, &inet->cork.fl);
 
 	if (unlikely(err > 0)) {
+        if(tp->mpc){
+            mptcp_debug("%s: meta= %p pi= %u cwnd= %u sendstall\n", __func__, tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd);
+        }
 		tcp_enter_cwr(sk);
 		err = net_xmit_eval(err);
 	}
