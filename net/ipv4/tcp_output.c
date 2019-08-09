@@ -2254,11 +2254,15 @@ static bool tcp_small_queue_check(struct sock *sk, const struct sk_buff *skb,
 				  unsigned int factor)
 {
 	unsigned int limit;
+	struct tcp_sock *tp = tcp_sk(sk);
 
 	limit = max(2 * skb->truesize, sk->sk_pacing_rate >> sk->sk_pacing_shift);
 	limit = min_t(u32, limit,
 		      sock_net(sk)->ipv4.sysctl_tcp_limit_output_bytes);
 	limit <<= factor;
+    if(tp->mpc){
+        mptcp_debug("%s: meta= %p pi= %u cwnd= %u srtt= %u thresh= %u packetsout= %u pacingrate= %u shiftpacing= %u wmemalloc= %u limit= %u\n", __func__, tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) / 1000,tp->snd_ssthresh, tp->packets_out,sk->sk_pacing_rate,sk->sk_pacing_rate >> 10,refcount_read(&sk->sk_wmem_alloc),limit);
+    }
 
 	if (refcount_read(&sk->sk_wmem_alloc) > limit) {
 		/* Always send skb if rtx queue is empty.
