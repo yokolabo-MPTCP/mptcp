@@ -309,7 +309,7 @@ static struct sk_buff *mptcp_rcv_buf_optimization(struct sock *sk, int penal)
 				if (prior_cwnd >= tp_it->snd_ssthresh)
 					tp_it->snd_ssthresh = max(tp_it->snd_ssthresh >> 1U, 2U);
 
-                mptcp_debug("%s: meta= %p pi= %u cwnd= %u srtt= %u thresh= %u packetsout= %u pacingrate= %u shiftpacing= %u wmemalloc= %u rcv_buf_opti\n", __func__, tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) / 1000,tp->snd_ssthresh, tp->packets_out,sk->sk_pacing_rate,sk->sk_pacing_rate >> 10,atomic_read(&sk->sk_wmem_alloc));
+				mptcp_debug("%s: meta= %p pi= %u cwnd= %u rcvbuf\n", __func__, tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd);
 				dsp->last_rbuf_opti = tcp_time_stamp;
 			}
 		}
