@@ -301,6 +301,7 @@ static struct sk_buff *mptcp_rcv_buf_optimization(struct sock *sk, int penal)
 				u32 prior_cwnd = tp_it->snd_cwnd;
 
 				tp_it->snd_cwnd = max(tp_it->snd_cwnd >> 1U, 1U);
+                mptcp_debug("%s: meta= %p pi= %u cwnd= %u rcvbuf\n", __func__, tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd);
 
 				/* If in slow start, do not reduce the ssthresh */
 				if (prior_cwnd >= tp_it->snd_ssthresh)
