@@ -2156,7 +2156,7 @@ bool tcp_write_xmit(struct sock *sk, unsigned int mss_now, int nonagle,
             limit = sysctl_tcp_limit_output_bytes;
         }
         if(tp->mpc){
-            mptcp_debug("%s: meta= %p pi= %u cwnd= %u srtt= %u thresh= %u packetsout= %u pacingrate= %u shiftpacing= %u wmemalloc= %u limit= %u\n", __func__, tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) / 1000,tp->snd_ssthresh, tp->packets_out,sk->sk_pacing_rate,sk->sk_pacing_rate >> 10,atomic_read(&sk->sk_wmem_alloc),limit);
+            mptcp_debug("%s: meta= %p pi= %u cwnd= %u srtt= %u thresh= %u packetsout= %u pacingrate= %u shiftpacing= %u wmemalloc= %u limit= %u\n", __func__, tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, jiffies_to_usecs(tp->srtt_us)>>3,tp->snd_ssthresh, tp->packets_out,sk->sk_pacing_rate,sk->sk_pacing_rate >> 10,atomic_read(&sk->sk_wmem_alloc),limit);
         }
 
 		if (atomic_read(&sk->sk_wmem_alloc) > limit) {
