@@ -2538,7 +2538,7 @@ void tcp_enter_cwr(struct sock *sk)
 		tp->undo_marker = 0;
 		tcp_init_cwnd_reduction(sk);
 		tcp_set_ca_state(sk, TCP_CA_CWR);
-		mptcp_debug("%s: meta= %p pi= %u cwnd= %u lcc\n",__func__, sk,tp->mptcp->path_index,tp->snd_cwnd);
+		mptcp_debug("meta= %p pi= %u cwnd= %u lcc\n", tp->meta_sk,tp->mptcp->path_index,tp->snd_cwnd);
 	}
 }
 EXPORT_SYMBOL(tcp_enter_cwr);

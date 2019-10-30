@@ -1196,7 +1196,7 @@ static int __tcp_transmit_skb(struct sock *sk, struct sk_buff *skb,
 
 	if (unlikely(err > 0)) {
         if(tp->mpc){
-            mptcp_debug("%s: meta= %p pi= %u cwnd= %u sendstall\n", __func__, tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd);
+            mptcp_debug("meta= %p pi= %u cwnd= %u sendstall\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd);
         }
 		tcp_enter_cwr(sk);
 		err = net_xmit_eval(err);
@@ -2264,7 +2264,7 @@ static bool tcp_small_queue_check(struct sock *sk, const struct sk_buff *skb,
 		      sock_net(sk)->ipv4.sysctl_tcp_limit_output_bytes);
 	limit <<= factor;
     if(tp->mpc){
-        mptcp_debug("%s: meta= %p pi= %u cwnd= %u srtt= %u thresh= %u packetsout= %u pacingrate= %u shiftpacing= %u wmemalloc= %u limit= %u\n", __func__, tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh, tp->packets_out,sk->sk_pacing_rate,sk->sk_pacing_rate >> 10,refcount_read(&sk->sk_wmem_alloc),limit);
+        mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u packetsout= %u pacingrate= %u shiftpacing= %u wmemalloc= %u limit= %u\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh, tp->packets_out,sk->sk_pacing_rate,sk->sk_pacing_rate >> 10,refcount_read(&sk->sk_wmem_alloc),limit);
     }
 
 	if (refcount_read(&sk->sk_wmem_alloc) > limit) {
