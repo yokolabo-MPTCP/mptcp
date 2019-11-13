@@ -2973,6 +2973,10 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
 			tcp_rate_skb_sent(sk, skb);
 		}
 	} else {
+
+        	if(tp->mpc){
+		    mptcp_debug("meta= %p pi= %u cwnd= %u retransmit\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd);
+		}
 		err = tcp_transmit_skb(sk, skb, 1, GFP_ATOMIC);
 	}
 
