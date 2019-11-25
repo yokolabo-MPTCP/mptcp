@@ -2263,6 +2263,9 @@ static bool tcp_small_queue_check(struct sock *sk, const struct sk_buff *skb,
 	limit = min_t(u32, limit,
 		      sock_net(sk)->ipv4.sysctl_tcp_limit_output_bytes);
 	limit <<= factor;
+    if(sysctl_mptcp_fixed_tsq_limit == 1){
+        limit = sock_net(sk)->ipv4.sysctl_tcp_limit_output_bytes;
+    }
     if(tp->mpc){
         mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u packetsout= %u pacingrate= %u shiftpacing= %u wmemalloc= %u limit= %u\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh, tp->packets_out,sk->sk_pacing_rate,sk->sk_pacing_rate >> 10,refcount_read(&sk->sk_wmem_alloc),limit);
     }

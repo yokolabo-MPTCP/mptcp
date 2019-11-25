@@ -824,7 +824,11 @@ static void tcp_update_pacing_rate(struct sock *sk)
 	else
 		rate *= sock_net(sk)->ipv4.sysctl_tcp_pacing_ca_ratio;
 
-	rate *= max(tp->snd_cwnd, tp->packets_out);
+    if (sysctl_mptcp_pacingrate_packetsout_only == 1){
+	    rate *= tp->packets_out;
+    }else{
+	    rate *= max(tp->snd_cwnd, tp->packets_out);
+    }
 
 	if (likely(tp->srtt_us))
 		do_div(rate, tp->srtt_us);
