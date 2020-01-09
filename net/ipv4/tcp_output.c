@@ -1197,6 +1197,8 @@ static int __tcp_transmit_skb(struct sock *sk, struct sk_buff *skb,
 	if (unlikely(err > 0)) {
         if(tp->mpc){
             mptcp_debug("meta= %p pi= %u cwnd= %u sendstall\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd);
+        }else{
+            printk("meta= %p pi= 1 cwnd= %u sendstall\n",sk,tp->snd_cwnd); 
         }
 		tcp_enter_cwr(sk);
 		err = net_xmit_eval(err);
@@ -2268,6 +2270,8 @@ static bool tcp_small_queue_check(struct sock *sk, const struct sk_buff *skb,
     }
     if(tp->mpc){
         mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u packetsout= %u pacingrate= %u shiftpacing= %u wmemalloc= %u limit= %u\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh, tp->packets_out,sk->sk_pacing_rate,sk->sk_pacing_rate >> 10,refcount_read(&sk->sk_wmem_alloc),limit);
+    }else{
+        printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u packetsout= %u pacingrate= %u shiftpacing= %u wmemalloc= %u limit= %u\n",sk,tp->snd_cwnd,(tp->srtt_us>>3),tp->snd_ssthresh,tp->packets_out,sk->sk_pacing_rate,sk->sk_pacing_rate >> 10,refcount_read(&sk->sk_wmem_alloc),limit); 
     }
 
 	if (refcount_read(&sk->sk_wmem_alloc) > limit) {
@@ -2977,9 +2981,11 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
 		}
 	} else {
 
-        	if(tp->mpc){
+        if(tp->mpc){
 		    mptcp_debug("meta= %p pi= %u cwnd= %u retransmit\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd);
-		}
+		}else{
+            printk("meta= %p pi= 1 cwnd= %u retransmit\n",sk,tp->snd_cwnd);
+        }
 		err = tcp_transmit_skb(sk, skb, 1, GFP_ATOMIC);
 	}
 
