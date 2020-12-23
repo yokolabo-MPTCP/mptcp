@@ -170,8 +170,20 @@ static void mptcp_wvegas_cong_avoid(struct sock *sk, u32 ack, u32 acked)
 	struct tcp_sock *tp = tcp_sk(sk);
 	struct wvegas *wvegas = inet_csk_ca(sk);
 
+    if(tp->mpc){
+        mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u wvegas start\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh);
+    }else{
+        printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u wvegas start\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh); 
+    }
+
 	if (!wvegas->doing_wvegas_now) {
 		tcp_reno_cong_avoid(sk, ack, acked);
+        if(tp->mpc){
+            mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u wvegas no_wvegas\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh);
+        }else{
+            printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u wvegas no_wvegas\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh); 
+        }
+
 		return;
 	}
 
@@ -192,9 +204,20 @@ static void mptcp_wvegas_cong_avoid(struct sock *sk, u32 ack, u32 acked)
 			if (diff > gamma && tcp_in_slow_start(tp)) {
 				tp->snd_cwnd = min(tp->snd_cwnd, (u32)target_cwnd+1);
 				tp->snd_ssthresh = mptcp_wvegas_ssthresh(tp);
+                if(tp->mpc){
+                    mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u wvegas gamma_slow_start\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh);
+                }else{
+                    printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u wvegas gamma_slow_start\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh); 
+                }
 
 			} else if (tcp_in_slow_start(tp)) {
 				tcp_slow_start(tp, acked);
+                if(tp->mpc){
+                    mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u wvegas slow_start\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh);
+                }else{
+                    printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u wvegas slow_start\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh); 
+                }
+
 			} else {
 				if (diff >= wvegas->alpha) {
 					wvegas->instant_rate = mptcp_wvegas_rate(tp->snd_cwnd, rtt);
@@ -207,6 +230,11 @@ static void mptcp_wvegas_cong_avoid(struct sock *sk, u32 ack, u32 acked)
 				} else if (diff < wvegas->alpha) {
 					tp->snd_cwnd++;
 				}
+                if(tp->mpc){
+                    mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u wvegas +1_or_-1\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh);
+                }else{
+                    printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u wvegas +1_or_-1\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh); 
+                }
 
 				/* Try to drain link queue if needed*/
 				q_delay = rtt - wvegas->base_rtt;
@@ -216,6 +244,12 @@ static void mptcp_wvegas_cong_avoid(struct sock *sk, u32 ack, u32 acked)
 				if (q_delay >= 2 * wvegas->queue_delay) {
 					u32 backoff_factor = div_u64(mptcp_wvegas_scale(wvegas->base_rtt, MPTCP_WVEGAS_SCALE), 2 * rtt);
 					tp->snd_cwnd = ((u64)tp->snd_cwnd * backoff_factor) >> MPTCP_WVEGAS_SCALE;
+                    if(tp->mpc){
+                        mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u wvegas q_delay_over\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh);
+                    }else{
+                        printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u wvegas q_delay_over\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh); 
+                    }
+
 					wvegas->queue_delay = 0;
 				}
 			}
@@ -226,14 +260,26 @@ static void mptcp_wvegas_cong_avoid(struct sock *sk, u32 ack, u32 acked)
 				tp->snd_cwnd = tp->snd_cwnd_clamp;
 
 			tp->snd_ssthresh = tcp_current_ssthresh(sk);
+            if(tp->mpc){
+                    mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u wvegas end_cong_avoid\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh);
+            }else{
+                    printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u wvegas end_cong_avoid\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh); 
+            }
+
 		}
 
 		wvegas->cnt_rtt = 0;
 		wvegas->sampled_rtt = 0;
 	}
 	/* Use normal slow start */
-	else if (tcp_in_slow_start(tp))
+	else if (tcp_in_slow_start(tp)){
 		tcp_slow_start(tp, acked);
+        if(tp->mpc){
+                mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u wvegas tcp_slow_start\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh);
+        }else{
+                printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u wvegas tcp_slow_start\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh); 
+        }
+    }    
 }
 
 
