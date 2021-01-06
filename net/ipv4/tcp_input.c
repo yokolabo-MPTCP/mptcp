@@ -2031,6 +2031,11 @@ void tcp_enter_loss(struct sock *sk)
 		tp->reordering = min_t(unsigned int, tp->reordering,
 				       net->ipv4.sysctl_tcp_reordering);
 	tcp_set_ca_state(sk, TCP_CA_Loss);
+    if(tp->mpc){
+            mptcp_debug("meta= %p pi= %u cwnd= %u Timeout\n", tp->meta_sk,tp->mptcp->path_index,tp->snd_cwnd);
+        }else{
+            printk("meta= %p pi= 1 cwnd= %u Timeout\n",sk,tp->snd_cwnd);
+        }
 	tp->high_seq = tp->snd_nxt;
 	tcp_ecn_queue_cwr(tp);
 
@@ -2654,6 +2659,11 @@ void tcp_simple_retransmit(struct sock *sk)
 		tp->prior_ssthresh = 0;
 		tp->undo_marker = 0;
 		tcp_set_ca_state(sk, TCP_CA_Loss);
+        if(tp->mpc){
+            mptcp_debug("meta= %p pi= %u cwnd= %u Timeout retransmit\n", tp->meta_sk,tp->mptcp->path_index,tp->snd_cwnd);
+        }else{
+            printk("meta= %p pi= 1 cwnd= %u Timeout retransmit\n",sk,tp->snd_cwnd);
+        }
 	}
 	tcp_xmit_retransmit_queue(sk);
 }
@@ -2680,6 +2690,11 @@ void tcp_enter_recovery(struct sock *sk, bool ece_ack)
 		tcp_init_cwnd_reduction(sk);
 	}
 	tcp_set_ca_state(sk, TCP_CA_Recovery);
+    if(tp->mpc){
+        mptcp_debug("meta= %p pi= %u cwnd= %u PacketLoss\n", tp->meta_sk,tp->mptcp->path_index,tp->snd_cwnd);
+    }else{
+        printk("meta= %p pi= 1 cwnd= %u PacketLoss\n",sk,tp->snd_cwnd);
+    }
 }
 
 /* Process an ACK in CA_Loss state. Move to CA_Open if lost data are
@@ -3542,6 +3557,11 @@ static void tcp_process_tlp_ack(struct sock *sk, u32 ack, int flag)
 		 */
 		tcp_init_cwnd_reduction(sk);
 		tcp_set_ca_state(sk, TCP_CA_CWR);
+        if(tp->mpc){
+            mptcp_debug("meta= %p pi= %u cwnd= %u tlp\n", tp->meta_sk,tp->mptcp->path_index,tp->snd_cwnd);
+        }else{
+            printk("meta= %p pi= 1 cwnd= %u tlp\n",sk,tp->snd_cwnd);
+        }
 		tcp_end_cwnd_reduction(sk);
 		tcp_try_keep_open(sk);
 		NET_INC_STATS(sock_net(sk),
