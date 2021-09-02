@@ -280,12 +280,19 @@ static void mptcp_wvegas_cong_avoid(struct sock *sk, u32 ack, u32 acked)
 	/* Use normal slow start */
 	else if (tcp_in_slow_start(tp)){
 		tcp_slow_start(tp, acked);
-        if(tp->mpc){
+            if(tp->mpc){
                 mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u wvegas tcp_slow_start\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh);
-        }else{
+            }else{
                 printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u wvegas tcp_slow_start\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh); 
+            }
         }
-    }    
+	
+	if(tp->mpc){
+		mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u wvegas finish\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh);
+	}else{
+		printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u wvegas finish\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh); 
+	}
+
 }
 
 
