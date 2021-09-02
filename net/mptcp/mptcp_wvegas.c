@@ -190,6 +190,12 @@ static void mptcp_wvegas_cong_avoid(struct sock *sk, u32 ack, u32 acked)
 	if (after(ack, wvegas->beg_snd_nxt)) {
 		wvegas->beg_snd_nxt  = tp->snd_nxt;
 
+                if(tp->mpc){
+                    mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u wvegas_cngctl\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh);
+                }else{
+                    printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u wvegas_cngctl\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh); 
+                }
+
 		if (wvegas->cnt_rtt <= 2) {
 			tcp_reno_cong_avoid(sk, ack, acked);
 		} else {
