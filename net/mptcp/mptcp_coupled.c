@@ -145,6 +145,7 @@ static void mptcp_ccc_recalc_alpha(const struct sock *sk)
 		}
 	}
 
+	const struct sock *sub_sk = mptcp_to_sock(mptcp);
 	struct tcp_sock *sub_tp = tcp_sk(sub_sk);
 	alpha = div64_u64(mptcp_ccc_scale(best_cwnd, alpha_scale_num), sum_denominator*sub_tp->snd_cwnd);
 
