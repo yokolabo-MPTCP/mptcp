@@ -104,6 +104,7 @@ static void mptcp_ccc_recalc_alpha(const struct sock *sk)
 		 * Integer-overflow is not possible here, because
 		 * tmp will be in u64.
 		 */
+
 		tmp = div64_u64(mptcp_ccc_scale(sub_tp->snd_cwnd,
 				alpha_scale_num), (u64)sub_tp->srtt_us * sub_tp->srtt_us);
 
@@ -131,7 +132,7 @@ static void mptcp_ccc_recalc_alpha(const struct sock *sk)
 						alpha_scale_den) * best_rtt,
 						sub_tp->srtt_us);
 	}
-	sum_denominator *= sum_denominator;
+	//sum_denominator *= sum_denominator;
 	if (unlikely(!sum_denominator)) {
 		pr_err("%s: sum_denominator == 0\n", __func__);
 		mptcp_for_each_sub(mpcb, mptcp) {
@@ -144,7 +145,7 @@ static void mptcp_ccc_recalc_alpha(const struct sock *sk)
 		}
 	}
 
-	alpha = div64_u64(mptcp_ccc_scale(best_cwnd, alpha_scale_num), sum_denominator);
+	alpha = div64_u64(mptcp_ccc_scale(best_cwnd, alpha_scale_num), sum_denominator*sub_tp->snd_cwnd);
 
 	if (unlikely(!alpha))
 		alpha = 1;
