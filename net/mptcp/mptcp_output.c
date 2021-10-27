@@ -844,6 +844,8 @@ bool mptcp_write_xmit(struct sock *meta_sk, unsigned int mss_now, int nonagle,
 		if (sublimit)
 			limit = min(limit, sublimit);
 
+		//mptcp_debug("meta= %p pi= %u cwnd= %u limit= %u SchedulerCheck\n", subtp->meta_sk, subtp->mptcp->path_index, subtp->snd_cwnd, limit);
+
 		if (skb->len > limit &&
 		    unlikely(mptcp_fragment(meta_sk, tcp_queue,
 					    skb, limit, gfp, reinject)))
