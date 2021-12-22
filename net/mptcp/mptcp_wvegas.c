@@ -236,11 +236,11 @@ static void mptcp_wvegas_cong_avoid(struct sock *sk, u32 ack, u32 acked)
 				} else if (diff < wvegas->alpha) {
 					tp->snd_cwnd++;
 				}
-                if(tp->mpc){
-                    mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u wvegas +1_or_-1\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh);
-                }else{
-                    printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u wvegas +1_or_-1\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh); 
-                }
+				if(tp->mpc){
+				    mptcp_debug("meta= %p pi= %u cwnd= %u srtt= %u thresh= %u diff= %u alpha= %u wvegas +1_or_-1\n", tp->meta_sk, tp->mptcp->path_index, tp->snd_cwnd, (tp->srtt_us>>3), tp->snd_ssthresh, diff, wvegas->alpha);
+				}else{
+				    printk("meta= %p pi= 1 cwnd= %u srtt= %u thresh= %u diff= %u alpha= %u wvegas +1_or_-1\n",sk,tp->snd_cwnd, (tp->srtt_us>>3) ,tp->snd_ssthresh, diff, wvegas->alpha); 
+				}
 
 				/* Try to drain link queue if needed*/
 				q_delay = rtt - wvegas->base_rtt;
